@@ -1,4 +1,6 @@
 import tensorflow as tf
+import time
+
 def main():
     mnist = tf.keras.datasets.mnist
 
