@@ -73,14 +73,16 @@ for i in range(len(dict)):#字典里每一个词覆盖
         j=+1
         for l in range(len(list)):  # 便利全部list
             for m in range(len(list[l])):# 遍历list当中每一个可能，判断i是否在其中
-                if dict[i] == list[j][m]:
+                if dict[i] == list[l][m]:
                     for n in range(len(list[l])):#遍历list当中每一个可能,判断j是否在其中，是则z加1
-                        if dict[j] == list[j][n]:
+                        if dict[j] == list[l][n]:
                             z=+1
                         else:
                             pass
+                else:
+                    pass
     metrix[i][j]=z
-#print(metrix)
+print(metrix)
 
 
 
