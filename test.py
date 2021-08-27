@@ -1,3 +1,4 @@
+#only designed to help anyone who clone this project to verify whether env could support training of tensorflow or not.
 import tensorflow as tf
 import time
 

@@ -1,3 +1,6 @@
+# author:syt & monkeydc
+# last edit time:
+
 import pandas as pd
 #import sys
 import os
@@ -59,3 +62,4 @@ dict = generateDict('./aapd/tag')
 list = generatelist('./aapd/tag')
 length = len(dict)
 metrix = generateFMetrix(length)
+
