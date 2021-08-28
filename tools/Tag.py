@@ -61,26 +61,25 @@ def generateFMetrix(len):
 dict = generateDict('./aapd/tag')
 list = generatelist('./aapd/tag')
 length = len(dict)
-#print(dict[1])
-#print(length)
-print(dict[1])
-print(list[2][0])
-
 metrix = generateFMetrix(length+1)
-for i in range(len(dict)):#字典里每一个词覆盖
-    i=+1
-    for j in range(len(dict)):
-        j=+1
+for i in range(54):#字典里每一个词覆盖
+    i+=1
+    for j in range(54):
+        j+=1
+        z=0
         for l in range(len(list)):  # 便利全部list
-            for m in range(len(list[l])):# 遍历list当中每一个可能，判断i是否在其中
-                if dict[i] == list[j][m]:
-                    for n in range(len(list[l])):#遍历list当中每一个可能,判断j是否在其中，是则z加1
-                        if dict[j] == list[j][n]:
-                            z=+1
+            for m in range(len(list[l])):  # 遍历list当中每一个可能，判断i是否在其中
+                if dict[i] == list[l][m]:
+                    for n in range(len(list[l])):  # 遍历list当中每一个可能,判断j是否在其中，是则z加1
+                        if dict[j] == list[l][n]:
+                            z+=1
                         else:
                             pass
-    metrix[i][j]=z
-#print(metrix)
+                else:
+                    pass
+            #print(z)
+        metrix[i][j] = z
+print(metrix)
 
 
 
