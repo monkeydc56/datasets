@@ -55,12 +55,19 @@ def generateDict(path):
 def generateFMetrix(len):
     metrix = np.eye(len)
     return metrix
+
 def countPMI(path):
     # 计算共现矩阵
     dict = generateDict(path)
     list = generatelist(path)
     length = len(dict)
-    metrix = generateFMetrix(length + 1)
+    #metrix = generateFMetrix(length + 1)
+    metrix = []#矩阵总是报错，因为盲猜矩阵固定了单元格内的数据格式，为能够保存中间结果使用list
+    for i in range(length+1):
+        metrix.append([])
+        for j in range(length+1):
+            metrix[i].append(0)
+
     for i in range(54):  # 字典里每一个词覆盖
         i += 1
         for j in range(54):
