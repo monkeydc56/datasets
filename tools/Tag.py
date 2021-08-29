@@ -56,30 +56,46 @@ def generateFMetrix(len):
     metrix = np.eye(len)
     return metrix
 
+def countPMI(path):
+    # 计算共现矩阵
+    dict = generateDict(path)
+    list = generatelist(path)
+    length = len(dict)
+    #metrix = generateFMetrix(length + 1)
+    metrix = []#矩阵总是报错，因为盲猜矩阵固定了单元格内的数据格式，为能够保存中间结果使用list
+    for i in range(length+1):
+        metrix.append([])
+        for j in range(length+1):
+            metrix[i].append(0)
 
-#计算共现矩阵
-dict = generateDict('./aapd/tag')
-list = generatelist('./aapd/tag')
-length = len(dict)
-metrix = generateFMetrix(length+1)
-for i in range(54):#字典里每一个词覆盖
-    i+=1
-    for j in range(54):
-        j+=1
-        z=0
-        for l in range(len(list)):  # 便利全部list
-            for m in range(len(list[l])):  # 遍历list当中每一个可能，判断i是否在其中
-                if dict[i] == list[l][m]:
-                    for n in range(len(list[l])):  # 遍历list当中每一个可能,判断j是否在其中，是则z加1
-                        if dict[j] == list[l][n]:
-                            z+=1
-                        else:
-                            pass
-                else:
-                    pass
-            #print(z)
-        metrix[i][j] = z
-print(metrix)
+    for i in range(54):  # 字典里每一个词覆盖
+        i += 1
+        for j in range(54):
+            j += 1
+            z = 0
+            for l in range(len(list)):  # 便利全部list
+                for m in range(len(list[l])):  # 遍历list当中每一个可能，判断i是否在其中
+                    if dict[i] == list[l][m]:
+                        for n in range(len(list[l])):  # 遍历list当中每一个可能,判断j是否在其中，是则z加1
+                            if dict[j] == list[l][n]:
+                                z += 1
+                            else:
+                                pass
+                    else:
+                        pass
+                # print(z)
+            metrix[i][j] = z
+    for i in range(length+1):
+        if i ==0:
+            metrix[i][i] = 0
+        else:
+            metrix[i][0] = dict[i]#给每一行每一列搭上标记
+            metrix[0][i] = dict[i]#矩阵内部没办法打上string？总有报错说string没法convert in to float，所以不应该用这个方法存储
+                                  #其实list可以考虑下，然后按照索引输出
+    #没有计算完pmi，因为共现次数统计之后还需要
+    return metrix
 
-
+if __name__ == '__main__':
+    metrix = countPMI('./aapd/tag')
+    print(metrix)
 
