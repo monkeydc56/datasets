@@ -6,9 +6,10 @@ import pandas as pd
 import os
 import numpy as np
 import openpyxl
+import math
 
 
-os.chdir("/Users/xiexingyu/PycharmProjects/datasets")#地址修改成你自己的c盘那个，我暂时没改好这个，在看下代码
+os.chdir("C:/Users/哈哈/PycharmProjects/datasets")#地址修改成你自己的c盘那个，我暂时没改好这个，在看下代码
 #print(os.getcwd())
 #sys.path.append()
 
@@ -30,8 +31,9 @@ def generatelist(path):
     return b
 
 #建立字典
-def generateDict(path):
+def generateDict(path,b1):
     a = []
+
     with open(path, 'r') as f:
         for line in f:
             line = line.replace('[', '')
@@ -48,19 +50,64 @@ def generateDict(path):
     data_dict.columns = ['label']
     label_list = list(set(data_dict['label'].values.tolist()))
     labeldic = {}
+    countdic = {}
     pos = 0
+
     for i in label_list:
         pos = pos + 1
-        labeldic[pos] = str(i)
-    return labeldic
+        labeldic[i] = int(pos)
+    #return labeldic
+    appeardict = {}  # 各个标签为键，出现在哪些文本（将文本按顺序排列，出现的序号添加到列表中）为值，构造字典
+    for l in label_list:
+        appeardict[l]=[]
+    i = 0
+    for w in b1:
+        for w1 in w:
+            appeardict[w1].append(i)
+        i += 1
+    for m in label_list:
+        countdic[m] = len(appeardict[m])
+    return countdic,label_list#计算每个标签出现的次数用字典保存
+
+
+b = generatelist("./aapd/tag")
+countdic = generateDict("./aapd/tag",b)
+print(countdic)
 
 def generateFMetrix(len):
     metrix = np.eye(len)
     return metrix
 
+def PMI(metrix):
+    for x,y in label_list:
+        i=0
+        j=0
+        for i,j in range(55):
+            if x == metrix[i][0] and y == metrix[0][j]:
+                con=metrix[i][j]
+                i += 1
+                j += 1
+        conx=countdic[x]
+        cony=countdic[y]
+        a = con / (conx * cony)
+        pmi = np.log(a)
+        metrixP=generateFMetrix(55)
+        metrixP[0][1:]=label_list
+        metrixP[1:][0]=label_list
+        for p, q in range(55):
+            if p == metrixP[i][0] and q == metrixP[0][j]:
+                metrixP[p][q]=pmi
+                p += 1
+                q += 1
+    return metrixP
+
+
+
+
+
 def countPMI(path):
     # 计算共现矩阵
-    dict = generateDict(path)
+    dict = generateDict(path,b)
     list = generatelist(path)
     length = len(dict)
     #metrix = generateFMetrix(length + 1)
@@ -97,6 +144,9 @@ def countPMI(path):
     #没有计算完pmi，因为共现次数统计之后还需要
     return metrix
 
+
+
+
 def writeToExcel(file_path, new_list):
     # total_list = [['A', 'B', 'C', 'D', 'E'], [1, 2, 4, 6, 8], [4, 6, 7, 9, 0], [2, 6, 4, 5, 8]]
     wb = openpyxl.Workbook()
@@ -110,9 +160,14 @@ def writeToExcel(file_path, new_list):
     print("成功写入文件: " + file_path + " !")
     return None
 
+
+
 if __name__ == '__main__':
     metrix = countPMI('./aapd/tag')
     file_path = './results/metrix.csv'
-    writeToExcel(file_path, metrix)
-
-
+    b=generatelist('./aapd/tag')
+    label_list=generateDict('./aapd/tag',b)
+    countdic=generateDict('./aapd/tag',b)
+    print(countdic)
+    #metrixP=PMI(metrix,countdic,label_list)
+    #writeToExcel(file_path, metrix)
