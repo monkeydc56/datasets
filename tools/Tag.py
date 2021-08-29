@@ -5,6 +5,8 @@ import pandas as pd
 #import sys
 import os
 import numpy as np
+import openpyxl
+
 
 os.chdir("/Users/xiexingyu/PycharmProjects/datasets")#地址修改成你自己的c盘那个，我暂时没改好这个，在看下代码
 #print(os.getcwd())
@@ -95,7 +97,22 @@ def countPMI(path):
     #没有计算完pmi，因为共现次数统计之后还需要
     return metrix
 
+def writeToExcel(file_path, new_list):
+    # total_list = [['A', 'B', 'C', 'D', 'E'], [1, 2, 4, 6, 8], [4, 6, 7, 9, 0], [2, 6, 4, 5, 8]]
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = '明细'
+    for r in range(len(new_list)):
+        for c in range(len(new_list[0])):
+            ws.cell(r + 1, c + 1).value = new_list[r][c]
+            # excel中的行和列是从1开始计数的，所以需要+1
+    wb.save(file_path)  # 注意，写入后一定要保存
+    print("成功写入文件: " + file_path + " !")
+    return None
+
 if __name__ == '__main__':
     metrix = countPMI('./aapd/tag')
-    print(metrix)
+    file_path = './results/metrix.csv'
+    writeToExcel(file_path, metrix)
+
 
