@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
-data = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv",index_col=0)#共现矩阵文件的路径
-list=data.values.tolist()
+da = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv",index_col=0)#共现矩阵文件的路径
+tag = pd.read_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\datacsv.csv")
+list=da.values.tolist()
 #print(list[0][0])
-#print(data)
+#print(len(tag))
 #print(list[1][1])
 
 def PMI(data):
@@ -30,32 +31,24 @@ def PMI(data):
     #print(data)
     # return metrixP
 
-def newPMI(data,list):
-    i = 0
-    l = len(data)
+def newPMI(tag,list):
+    l = len(tag)
     for i in range(len(list)):
         conx = list[i][i]
         px = conx/l
-        i += 1
-        j = 0
         for j in range(len(list)):
             cony = list[j][j]
             py = cony/l
             con = list[i][j]
             pxy = con/l
-            j += 1
-
             #print(con)
-
-
-            if con == 0:
-                pmi=0
-                print("b")
+            if con != 0:
+                pmi = (pxy / (px * py))
+                list[i][j] = pmi
             else:
-                #pmi = np.log(pxy / (px * py))
-                #list[i][j] = pmi
-    #print("a")
-    #pd.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\newpmicsv.csv")  # 保存计算好的PMI
+                list[i][j] = 0
+    test = pd.DataFrame(data=list)
+    test.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\newpmicsv1.csv")  # 保存计算好的PMI
 
 def generatelist(path):
     a = []
@@ -119,6 +112,6 @@ def generateDict(path, b1):
 #print(countdic)
 
 
-c = newPMI(data,list)
+c = newPMI(tag,list)
 
 
