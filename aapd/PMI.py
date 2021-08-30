@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 data = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv", index_col=0)
 
 
@@ -93,9 +93,7 @@ countdic, label_list = generateDict("./aapd/tag", b)
 print(countdic)
 
 
-def generateFMetrix(len):
-    metrix = np.eye(len)
-    return metrix
+
 
 
 metrixP = PMI(data)
