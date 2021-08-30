@@ -1,9 +1,11 @@
 import pandas as pd
 import numpy as np
-data = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv", index_col=0)
+data = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv",index_col=0)#共现矩阵文件的路径
+list=data.values.tolist()
+#print(list[0][0])
+#print(data)
+#print(list[1][1])
 
-
-# data.head()
 def PMI(data):
     i = 0
     j = 0
@@ -13,8 +15,6 @@ def PMI(data):
         for j in range(54):
             conx = countdic[list1[i]]
             cony = countdic[list2[j]]
-            # for i,j in zip(range(54),range(54)):
-            # if list1[i] == metrix[i][0] and list2[j] == metrix[0][j]:
             con = data.iloc[i, j]
 
             # conx=countdic[x]
@@ -26,10 +26,36 @@ def PMI(data):
     # metrixP=generateFMetrix(54)
     # metrixP[0][1:]=label_list
     # metrixP[1:][0]=label_list
-    pd.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\pmicsv.csv")#保存计算好的PMI
-    print(data)
+    #pd.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\pmicsv.csv")#保存计算好的PMI
+    #print(data)
     # return metrixP
 
+def newPMI(data,list):
+    i = 0
+    l = len(data)
+    for i in range(len(list)):
+        conx = list[i][i]
+        px = conx/l
+        i += 1
+        j = 0
+        for j in range(len(list)):
+            cony = list[j][j]
+            py = cony/l
+            con = list[i][j]
+            pxy = con/l
+            j += 1
+
+            #print(con)
+
+
+            if con == 0:
+                pmi=0
+                print("b")
+            else:
+                #pmi = np.log(pxy / (px * py))
+                #list[i][j] = pmi
+    #print("a")
+    #pd.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\newpmicsv.csv")  # 保存计算好的PMI
 
 def generatelist(path):
     a = []
@@ -88,12 +114,11 @@ def generateDict(path, b1):
     return countdic, label_list  # 计算每个标签出现的次数用字典保存
 
 
-b = generatelist("./aapd/tag")
-countdic, label_list = generateDict("./aapd/tag", b)
-print(countdic)
+#b = generatelist("./aapd/tag")
+#countdic, label_list = generateDict("./aapd/tag", b)
+#print(countdic)
 
 
+c = newPMI(data,list)
 
 
-
-metrixP = PMI(data)
