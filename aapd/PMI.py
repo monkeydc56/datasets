@@ -22,7 +22,7 @@ def newPMI(tag,list,list1):
             #if i >= j:
 
             if con != 0:
-                pmi = (pxy / (px * py))
+                pmi = np.log(pxy / (px * py))
                 list[i][j] = pmi
             else:
                 list[i][j] = 0
@@ -30,7 +30,7 @@ def newPMI(tag,list,list1):
             #else:
                 #list[i][j]=list[j][i]
     test = pd.DataFrame(data=list)
-    test.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\pmi1.csv")  # 保存计算好的PMI
+    test.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\pmi2.csv")  # 保存计算好的PMI
 
 
 c = newPMI(tag,list,list1)
