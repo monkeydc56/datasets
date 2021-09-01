@@ -3,7 +3,7 @@ class GraphConvolution(nn.Module):
         super(GraphConvolution, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
-        self.weight = nn.Parameter(torch.FloatTensor(in_features, out_features))
+        self.weight = nn.Parameter(torch.FloatTensor(in_features, out_features))#转化为numpy格式，再对其可训练
         if bias:
             self.bias = nn.Parameter(torch.FloatTensor(out_features))
         else:
