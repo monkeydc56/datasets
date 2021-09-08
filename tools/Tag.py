@@ -1,6 +1,6 @@
 # author:syt & monkeydc
 # last edit time:
-
+import json
 import pandas as pd
 #import sys
 import os
@@ -10,9 +10,6 @@ import math
 
 
 os.chdir("C:/Users/哈哈/PycharmProjects/datasets")#地址修改成你自己的c盘那个，我暂时没改好这个，在看下代码
-#print(os.getcwd())
-#sys.path.append()
-
 #生成格式化列表，可以用于共现计算
 def generatelist(path):
     a = []
@@ -69,41 +66,13 @@ def generateDict(path,b1):
         countdic[m] = len(appeardict[m])
     return countdic,label_list#计算每个标签出现的次数用字典保存
 
+# b = generatelist("./aapd/tag")
+# label_list = generateDict("./aapd/tag",b)
 
-b = generatelist("./aapd/tag")
-countdic = generateDict("./aapd/tag",b)
-print(countdic)
 
 def generateFMetrix(len):
     metrix = np.eye(len)
     return metrix
-
-def PMI(metrix):
-    for x,y in label_list:
-        i=0
-        j=0
-        for i,j in range(55):
-            if x == metrix[i][0] and y == metrix[0][j]:
-                con=metrix[i][j]
-                i += 1
-                j += 1
-        conx=countdic[x]
-        cony=countdic[y]
-        a = con / (conx * cony)
-        pmi = np.log(a)
-        metrixP=generateFMetrix(55)
-        metrixP[0][1:]=label_list
-        metrixP[1:][0]=label_list
-        for p, q in range(55):
-            if p == metrixP[i][0] and q == metrixP[0][j]:
-                metrixP[p][q]=pmi
-                p += 1
-                q += 1
-    return metrixP
-
-
-
-
 
 def countPMI(path):
     # 计算共现矩阵
@@ -144,9 +113,6 @@ def countPMI(path):
     #没有计算完pmi，因为共现次数统计之后还需要
     return metrix
 
-
-
-
 def writeToExcel(file_path, new_list):
     # total_list = [['A', 'B', 'C', 'D', 'E'], [1, 2, 4, 6, 8], [4, 6, 7, 9, 0], [2, 6, 4, 5, 8]]
     wb = openpyxl.Workbook()
@@ -160,6 +126,86 @@ def writeToExcel(file_path, new_list):
     print("成功写入文件: " + file_path + " !")
     return None
 
+da = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv",index_col=0)#共现矩阵文件的路径
+data=pd.read_table(r'C:\Users\哈哈\PycharmProjects\datasets\aapd\tag',header=None)#所有缩写标签的位置
+data=data.values.tolist()
+# tag = pd.read_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\datacsv.csv")#tag的csv文件路径
+list = da.values.tolist()
+list1 = da.values.tolist()
+
+def newPMI(data,list,list1):#list和list1为共现矩阵的列表
+    l = len(data)
+    for i in range(len(list)):
+        conx = list1[i][i]
+        px = conx / l
+        for j in range(len(list)):
+            cony = list1[j][j]
+            py = cony/l
+            con = list1[i][j]
+            pxy = con/l
+            if con != 0:
+                pmi = np.log(pxy / (px * py))
+                list[i][j] = pmi
+            else:
+                list[i][j] = 0
+    test = pd.DataFrame(data=list)
+    test.to_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\pmi2.csv")  # 保存计算好的PMI
+
+path = "D:\glove\.vector_cache\glove.6B.300d.txt"#glove路径
+def Glove(path):
+    embeddings_dict = {}
+    embeddings_dict['<unk>']=np.zeros(300)#unk为300维的0
+    with open(path,'r', encoding="utf-8") as f:
+        for line in f:
+            values = line.split()
+            word = values[0]
+            vector = np.asarray(values[1:], "float32")
+            embeddings_dict[word] = vector
+    return embeddings_dict
+
+# # Calculate GloVe embeddings for each label in our target label subset.
+TAG = pd.read_excel(r'C:\Users\哈哈\PycharmProjects\datasets\aapd\TAG.xlsx',header = None)#标签缩写与全称文件位置
+def tra(TAG):
+    label_LIST = []
+    for i in range(len(TAG)):
+        label_LIST.append(TAG.iloc[i, 1].replace('.', ' ').replace(', ',' ').lower())#将标签中的.去除,还需去除，含—觉得不需要去除
+    return label_LIST
+
+# #对每个标签的所有词向量取均值，来生成一个平均的vector
+def build_sentence_vector(label_LIST, size, embeddings_dict):
+    sen_vec = np.zeros(size).reshape((1, size))
+    new = []
+    victor = []
+    for i in range(len(label_LIST)):
+        count = 0
+        new.append(label_LIST[i].split())#吧每条标签的空格去除分为单个字符串
+        for word in new[i]:
+            if word not in embeddings_dict.keys():
+                sen_vec = sen_vec + embeddings_dict['<unk>']
+            else:
+                sen_vec = sen_vec + embeddings_dict[word]
+                count += 1
+                sen_vec /= count
+        victor.append(sen_vec.tolist())
+    return victor
+#
+
+
+def onehot(data,TAG):
+    new=[]
+    one_hot=[]
+    for i in range(len(data)):
+        new.append(data[i][0].replace('[','').replace(']','').replace("'",'').replace(',',' ').split())#分割为字符串
+        one_hot_mid = [0] * len(TAG)
+        for str in new[i]:#所有tag文件中的标签按行遍历
+            hot = [0] * len(TAG)
+            for j in range(len(TAG)):
+                if str == TAG[0][j]:#缩写标签与对照表中的一样则所在的索引值为1
+                    hot[j]=1
+                else:
+                    hot[j]=0
+            one_hot_mid=[one_hot_mid[i]+hot[i] for i in range(min(len(one_hot_mid),len(hot)))]
+        one_hot.append(one_hot_mid)
 
 
 if __name__ == '__main__':
@@ -168,6 +214,5 @@ if __name__ == '__main__':
     b=generatelist('./aapd/tag')
     label_list=generateDict('./aapd/tag',b)
     countdic=generateDict('./aapd/tag',b)
-    print(countdic)
     #metrixP=PMI(metrix,countdic,label_list)
     #writeToExcel(file_path, metrix)

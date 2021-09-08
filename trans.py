@@ -2,7 +2,7 @@ import pandas as pd
 
 TAG = pd.read_excel(r'C:\Users\哈哈\PycharmProjects\datasets\aapd\TAG.xlsx',header = None)#标签全称对应位置
 tag = pd.read_table(r'C:\Users\哈哈\PycharmProjects\datasets\aapd\tag',header = None)#标签文件位置
-# print(TAG.shape)
+print(tag[0][0])
 #print(TAG.head())
 TAG = TAG.set_index(0, True)
 #print(TAG)
@@ -20,4 +20,3 @@ def transfor(tag,TAG):
     print('done')
 
 transfor(tag,TAG)
-
