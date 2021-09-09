@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 da = pd.read_excel(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\metrix.csv",index_col=0)#共现矩阵文件的路径
-tag = pd.read_csv(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\datacsv.csv")#tag的csv文件路径
+tag = pd.read_table(r"C:\Users\哈哈\PycharmProjects\datasets\aapd\tag",header=None)#tag的csv文件路径
 list = da.values.tolist()
 list1 = da.values.tolist()
 
